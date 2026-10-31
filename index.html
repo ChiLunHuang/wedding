@@ -194,33 +194,24 @@
 
       <div class="card">
         <span class="section-tag">基本資料</span>
-        <label class="field-label">請問您的大名 <span class="required">*</span></label>
+        <label class="field-label">Q1．請問您的大名 <span class="required">*</span></label>
         <div class="field-hint">請填本名唷！</div>
         <input class="field-input" type="text" id="q1" placeholder="您的姓名" autocomplete="name" />
       </div>
 
       <div class="card">
-        <label class="field-label">您的電子郵件 <span class="required">*</span></label>
-        <div class="field-hint">我們將以此信箱寄送電子喜帖</div>
-        <input class="field-input" type="email" id="q_email" placeholder="example@gmail.com" autocomplete="email" />
-      </div>
-
-      <div class="card">
-        <label class="field-label">Q2．與新人的關係 <span class="required">*</span></label>
-        <div class="field-hint">您是新郎的親友，還是新娘的親友？</div>
-        <div class="radio-group">
-          <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q2" value="男方親友"/><span>男方親友</span></label>
-          <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q2" value="女方親友"/><span>女方親友</span></label>
-        </div>
-      </div>
-
-      <div class="card">
-        <label class="field-label">Q3．是否會出席婚宴 <span class="required">*</span></label>
+        <label class="field-label">Q2．是否會出席婚宴 <span class="required">*</span></label>
         <div class="field-hint">期待與您共享這美好的一天！</div>
         <div class="radio-group">
           <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q3" value="會"/><span>會</span></label>
           <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q3" value="不會"/><span>不會</span></label>
         </div>
+      </div>
+
+      <div class="card">
+        <label class="field-label">Q3．您的電子郵件 <span class="required">*</span></label>
+        <div class="field-hint">我們將以此信箱寄送電子喜帖</div>
+        <input class="field-input" type="email" id="q_email" placeholder="example@gmail.com" autocomplete="email" />
       </div>
 
       <div class="card">
@@ -230,7 +221,16 @@
       </div>
 
       <div class="card">
-        <label class="field-label">Q5．出席人數 <span class="required">*</span></label>
+        <label class="field-label">Q5．與新人的關係 <span class="required">*</span></label>
+        <div class="field-hint">您是新郎的親友，還是新娘的親友？</div>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q2" value="男方親友"/><span>男方親友</span></label>
+          <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q2" value="女方親友"/><span>女方親友</span></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="field-label">Q6．出席人數 <span class="required">*</span></label>
         <div class="field-hint">含您本人的總出席人數</div>
         <div class="radio-grid">
           <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q5" value="1"/><span>1 人</span></label>
@@ -243,7 +243,7 @@
       </div>
 
       <div class="card">
-        <label class="field-label">Q6．需要幾張兒童座椅？ <span class="required">*</span></label>
+        <label class="field-label">Q7．需要幾張兒童座椅？ <span class="required">*</span></label>
         <div class="field-hint">如不需要請選 0</div>
         <div class="radio-grid">
           <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q6" value="0"/><span>0</span></label>
@@ -254,7 +254,7 @@
       </div>
 
       <div class="card">
-        <label class="field-label">Q7．素食需求人數 <span class="required">*</span></label>
+        <label class="field-label">Q8．素食需求人數 <span class="required">*</span></label>
         <div class="field-hint">如不需要請選 0</div>
         <div class="radio-grid">
           <label class="radio-item" onclick="selectRadio(this)"><input type="radio" name="q7" value="0"/><span>0</span></label>
@@ -324,11 +324,11 @@
     }
   }
 
-  // 選「不會」出席時,隱藏人數/兒童座椅/素食
+  // 選「不會」出席時,隱藏 Email/電話/關係/人數/兒童座椅/素食
   function toggleAttendFields() {
     var attending = getRadio('q3') !== '不會';
-    ['q5', 'q6', 'q7'].forEach(function(n) {
-      var card = document.querySelector('input[name="' + n + '"]').closest('.card');
+    ['#q_email', '#q4', 'input[name="q2"]', 'input[name="q5"]', 'input[name="q6"]', 'input[name="q7"]'].forEach(function(sel) {
+      var card = document.querySelector(sel).closest('.card');
       card.style.display = attending ? '' : 'none';
       var err = card.querySelector('.error-msg');
       if (err) err.remove();
@@ -362,19 +362,21 @@
     var name = document.getElementById('q1').value.trim();
     if (!name) { showError(document.getElementById('q1').closest('.card'), '請填寫您的姓名'); valid = false; }
 
-    var email = document.getElementById('q_email').value.trim();
-    if (!email) { showError(document.getElementById('q_email').closest('.card'), '請填寫您的電子郵件'); valid = false; }
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(document.getElementById('q_email').closest('.card'), '請填寫正確的電子郵件格式'); valid = false; }
-
-    var q2 = getRadio('q2');
-    if (!q2) { showError(document.querySelector('input[name="q2"]').closest('.card'), '請選擇與新人的關係'); valid = false; }
-
     var attend = getRadio('q3');
     var attending = attend !== '不會';
     if (!attend) { showError(document.querySelector('input[name="q3"]').closest('.card'), '請選擇是否出席婚宴'); valid = false; }
 
+    var email = document.getElementById('q_email').value.trim();
+    if (attending) {
+      if (!email) { showError(document.getElementById('q_email').closest('.card'), '請填寫您的電子郵件'); valid = false; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(document.getElementById('q_email').closest('.card'), '請填寫正確的電子郵件格式'); valid = false; }
+    }
+
     var phone = document.getElementById('q4').value.trim();
-    if (!phone) { showError(document.getElementById('q4').closest('.card'), '請填寫您的聯繫電話'); valid = false; }
+    if (attending && !phone) { showError(document.getElementById('q4').closest('.card'), '請填寫您的聯繫電話'); valid = false; }
+
+    var q2 = getRadio('q2');
+    if (attending && !q2) { showError(document.querySelector('input[name="q2"]').closest('.card'), '請選擇與新人的關係'); valid = false; }
 
     var q5 = getRadio('q5');
     if (attending && !q5) { showError(document.querySelector('input[name="q5"]').closest('.card'), '請選擇出席人數'); valid = false; }
@@ -407,10 +409,10 @@
 
     var params = new URLSearchParams({
       '姓名': name,
-      '電子郵件': email,
-      '關係': q2,
+      '電子郵件': attending ? email : '',
+      '關係': attending ? q2 : '',
       '出席': attend,
-      '電話': phone,
+      '電話': attending ? phone : '',
       '出席人數': attending ? q5val : '',
       '兒童座椅': attending ? q6 : '',
       '素食人數': attending ? veg : '',
